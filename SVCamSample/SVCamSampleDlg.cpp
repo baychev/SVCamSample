@@ -241,7 +241,7 @@ LRESULT CSVCamSampleDlg::WMDisplayImage(WPARAM WParam, LPARAM LParam)
 			SVUtilBufferBayerToRGB(*ImageInfo, ImageData_RGB, pDestLength);
 
 			// NOTE: uncomment to save images
-			//SaveImage(sizeX, sizeY, ImageData_RGB);
+			SaveImage(sizeX, sizeY, ImageData_RGB);
 			
 			ShowImageRGB(Display, sizeX, sizeY, ImageData_RGB);
 		}
@@ -1394,12 +1394,12 @@ int CSVCamSampleDlg::SaveImage(size_t _Width, size_t _Height, unsigned char *Ima
 		// save to file_path
 		__int64 now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 		string fn = "C:\\images\\" + std::to_string(now) + ".bmp";
-		FILE* pFile;
-		errno_t errorCode = fopen_s(&pFile, fn.c_str(), "w");
+		FILE* pFile = fopen(fn.c_str(), "wb");
+		//errno_t errorCode = fopen_s(&pFile, fn.c_str(), "w");
 
 		if (pFile == NULL)
 		{
-			return 0;
+			return 1;
 		}
 
 		BITMAPFILEHEADER bmfh;                         // Other BMP header
@@ -1423,6 +1423,8 @@ int CSVCamSampleDlg::SaveImage(size_t _Width, size_t _Height, unsigned char *Ima
 		fclose(pFile); // closing the file.
 
 		delete[] bitmapinfo;
-		return 1;
+		return 0;
 	}
+
+	return 1;
 }
